@@ -4,6 +4,7 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     libzip-dev \
     zip \
+    procps \
     unzip \
     git \
     && docker-php-ext-install pdo pdo_mysql zip
@@ -12,7 +13,6 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-COPY entrypoint.sh ./entrypoint.sh 
 COPY . .
 
 RUN usermod --non-unique --uid 1000 www-data \

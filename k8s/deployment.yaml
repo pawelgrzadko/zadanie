@@ -20,21 +20,29 @@ spec:
     spec:
       containers:
       - name: movies-recommendation
-        image: docker.io/pgrzadko/movies-recommendation:1.0
+        image: docker.io/pgrzadko/movies-recommendation:1.2
         ports:
         - containerPort: 9000
         livenessProbe:
-            httpGet:
-              path: /health
-              port: 80
-            initialDelaySeconds: 3
-            periodSeconds: 10
+          exec:
+            command:
+              - "sh"
+              - "-c"
+              - "pgrep php-fpm"
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 5
         readinessProbe:
-            httpGet:
-              path: /health
-              port: 80
-            initialDelaySeconds: 3
-            periodSeconds: 5
+            exec:
+              command:
+                - "sh"
+                - "-c"
+                - "pgrep php-fpm"
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 5
         volumeMounts:
             - name: env-config
               mountPath: /var/www/html/.env
