@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: movies-recommendation-deployment
+  namespace: movies-recommendation
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: movies-recommendation
+  template:
+    metadata:
+      labels:
+        app: movies-recommendation
+    spec:
+      containers:
+      - name: movies-recommendation
+        image: docker.io/pgrzadko/movies-recommendation:1.0
+        ports:
+        - containerPort: 9000
+        livenessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 3
+            periodSeconds: 10
+        readinessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 3
+            periodSeconds: 5
+        volumeMounts:
+            - name: env-config
+              mountPath: /var/www/html/.env
+              subPath: .env
+        resources:
+          requests:
+            cpu: 400m
+            memory: 1Gi
+          limits:
+            cpu: 500m
+            memory: 1.5Gi
+            
+      volumes:
+        - name: env-config
+          configMap:
+            name: php-env-config

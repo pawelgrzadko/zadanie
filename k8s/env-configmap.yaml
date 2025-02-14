@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: php-env-config
+  namespace: movies-recommendation
+data:
+  .env: |
+    APP_ENV=dev
+    APP_SECRET=5d999306e99fca0af5c03ecb20d12f71
